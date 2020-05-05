@@ -53,10 +53,10 @@ namespace PuppeteerSharp
             _timeout = timeout;
             _hasSameDocumentNavigation = false;
 
-            _sameDocumentNavigationTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            _newDocumentNavigationTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            _lifecycleTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            _terminationTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _sameDocumentNavigationTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
+            _newDocumentNavigationTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
+            _lifecycleTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
+            _terminationTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
             _terminationCancellationToken = new CancellationTokenSource();
 
             frameManager.LifecycleEvent += FrameManager_LifecycleEvent;

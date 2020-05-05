@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using PuppeteerSharp.Transport;
@@ -36,7 +36,7 @@ namespace PuppeteerSharp
         /// <summary>
         /// Additional arguments to pass to the browser instance. List of Chromium flags can be found <a href="http://peter.sh/experiments/chromium-command-line-switches/">here</a>.
         /// </summary>
-        public string[] Args { get; set; } = Array.Empty<string>();
+        public string[] Args { get; set; } = new string[] { };
 
         /// <summary>
         /// Maximum time in milliseconds to wait for the browser instance to start. Defaults to 30000 (30 seconds). Pass 0 to disable timeout.

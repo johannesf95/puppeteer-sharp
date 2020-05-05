@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -60,9 +61,8 @@ namespace PuppeteerSharp
 
         private readonly LaunchOptions _options;
         private readonly TempDirectory _tempUserDataDir;
-        private readonly ILogger _logger;
-        private readonly TaskCompletionSource<string> _startCompletionSource = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly TaskCompletionSource<bool> _exitCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<string> _startCompletionSource = new TaskCompletionSource<string>(TaskCreationOptions.None);
+        private readonly TaskCompletionSource<bool> _exitCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.None);
         private State _currentState = State.Initial;
 
         #endregion
@@ -78,9 +78,6 @@ namespace PuppeteerSharp
         public ChromiumProcess(string chromiumExecutable, LaunchOptions options, ILoggerFactory loggerFactory)
         {
             _options = options;
-            _logger = options.LogProcess
-                ? loggerFactory.CreateLogger<ChromiumProcess>()
-                : null;
 
             List<string> chromiumArgs;
             (chromiumArgs, _tempUserDataDir) = PrepareChromiumArgs(options);
@@ -94,7 +91,7 @@ namespace PuppeteerSharp
             Process.StartInfo.Arguments = string.Join(" ", chromiumArgs);
             Process.StartInfo.RedirectStandardError = true;
 
-            SetEnvVariables(Process.StartInfo.Environment, options.Env, Environment.GetEnvironmentVariables());
+            SetEnvVariables(Process.StartInfo.EnvironmentVariables, options.Env, Environment.GetEnvironmentVariables());
 
             if (options.DumpIO)
             {
@@ -276,7 +273,7 @@ namespace PuppeteerSharp
             return chromeArguments.ToArray();
         }
 
-        private static void SetEnvVariables(IDictionary<string, string> environment, IDictionary<string, string> customEnv, IDictionary realEnv)
+        private static void SetEnvVariables(StringDictionary environment, IDictionary<string, string> customEnv, IDictionary realEnv)
         {
             foreach (DictionaryEntry item in realEnv)
             {
@@ -399,7 +396,7 @@ namespace PuppeteerSharp
             /// </summary>
             /// <param name="p">The Chromium process</param>
             /// <returns></returns>
-            public virtual Task StartAsync(ChromiumProcess p) => Task.FromException(InvalidOperation("start"));
+            public virtual Task StartAsync(ChromiumProcess p) => Task.FromResult(InvalidOperation("start"));
 
             /// <summary>
             /// Handles process exit request.
@@ -407,14 +404,14 @@ namespace PuppeteerSharp
             /// <param name="p">The Chromium process</param>
             /// <param name="timeout">The maximum waiting time for a graceful process exit.</param>
             /// <returns></returns>
-            public virtual Task ExitAsync(ChromiumProcess p, TimeSpan timeout) => Task.FromException(InvalidOperation("exit"));
+            public virtual Task ExitAsync(ChromiumProcess p, TimeSpan timeout) => Task.FromResult(InvalidOperation("exit"));
 
             /// <summary>
             /// Handles process kill request.
             /// </summary>
             /// <param name="p">The Chromium process</param>
             /// <returns></returns>
-            public virtual Task KillAsync(ChromiumProcess p) => Task.FromException(InvalidOperation("kill"));
+            public virtual Task KillAsync(ChromiumProcess p) => Task.FromResult(InvalidOperation("kill"));
 
             /// <summary>
             /// Handles wait for process exit request.
@@ -468,16 +465,16 @@ namespace PuppeteerSharp
                 public override Task ExitAsync(ChromiumProcess p, TimeSpan timeout)
                 {
                     Exited.EnterFrom(p, this);
-                    return Task.CompletedTask;
+                    return Task.FromResult(false);
                 }
 
                 public override Task KillAsync(ChromiumProcess p)
                 {
                     Exited.EnterFrom(p, this);
-                    return Task.CompletedTask;
+                    return Task.FromResult(false);
                 }
 
-                public override Task WaitForExitAsync(ChromiumProcess p) => Task.FromException(InvalidOperation("wait for exit"));
+                public override Task WaitForExitAsync(ChromiumProcess p) => Task.FromResult(InvalidOperation("wait for exit"));
             }
 
             private class StartingState : State
@@ -576,13 +573,13 @@ namespace PuppeteerSharp
                         LogProcessCount(p, Interlocked.Increment(ref _processCount));
                     }
 
-                    return Task.CompletedTask;
+                    return Task.FromResult(false);
                 }
 
                 protected override void Leave(ChromiumProcess p)
                     => LogProcessCount(p, Interlocked.Decrement(ref _processCount));
 
-                public override Task StartAsync(ChromiumProcess p) => Task.CompletedTask;
+                public override Task StartAsync(ChromiumProcess p) => Task.FromResult(false);
 
                 public override Task ExitAsync(ChromiumProcess p, TimeSpan timeout) => Exiting.EnterFromAsync(p, this, timeout);
 
@@ -592,7 +589,7 @@ namespace PuppeteerSharp
                 {
                     try
                     {
-                        p._logger?.LogInformation("Process Count: {ProcessCount}", processCount);
+                        //p._logger?.LogInformation("Process Count: {ProcessCount}", processCount);
                     }
                     catch
                     {
@@ -674,11 +671,11 @@ namespace PuppeteerSharp
                     p._tempUserDataDir?.Dispose();
                 }
 
-                public override Task ExitAsync(ChromiumProcess p, TimeSpan timeout) => Task.CompletedTask;
+                public override Task ExitAsync(ChromiumProcess p, TimeSpan timeout) => Task.FromResult(false);
 
-                public override Task KillAsync(ChromiumProcess p) => Task.CompletedTask;
+                public override Task KillAsync(ChromiumProcess p) => Task.FromResult(false);
 
-                public override Task WaitForExitAsync(ChromiumProcess p) => Task.CompletedTask;
+                public override Task WaitForExitAsync(ChromiumProcess p) => Task.FromResult(false);
             }
 
             private class DisposedState : State

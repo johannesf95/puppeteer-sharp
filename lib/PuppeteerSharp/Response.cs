@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -51,7 +51,7 @@ namespace PuppeteerSharp
                 Port = responseMessage.RemotePort
             };
 
-            BodyLoadedTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            BodyLoadedTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
         }
 
         #region Properties

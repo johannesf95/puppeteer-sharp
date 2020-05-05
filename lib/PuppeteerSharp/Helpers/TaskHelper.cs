@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -152,7 +152,7 @@ namespace PuppeteerSharp.Helpers
                 return false;
             }
 
-            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.None);
             using (var cancellationToken = new CancellationTokenSource())
             {
                 cancellationToken.CancelAfter(timeout);

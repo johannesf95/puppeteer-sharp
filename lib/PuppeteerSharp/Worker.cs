@@ -47,7 +47,7 @@ namespace PuppeteerSharp
             _exceptionThrown = exceptionThrown;
             _client.MessageReceived += OnMessageReceived;
 
-            _executionContextCallback = new TaskCompletionSource<ExecutionContext>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _executionContextCallback = new TaskCompletionSource<ExecutionContext>(TaskCreationOptions.None);
             _ = _client.SendAsync("Runtime.enable").ContinueWith(task =>
             {
                 if (task.IsFaulted)
@@ -144,7 +144,7 @@ namespace PuppeteerSharp
             catch (Exception ex)
             {
                 var message = $"Worker failed to process {e.MessageID}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                //_logger.LogError(ex, message);
                 _client.Close(message);
             }
         }

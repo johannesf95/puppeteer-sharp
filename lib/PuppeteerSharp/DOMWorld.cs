@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -376,7 +376,7 @@ namespace PuppeteerSharp
         {
             if (_documentCompletionSource == null)
             {
-                _documentCompletionSource = new TaskCompletionSource<ElementHandle>(TaskCreationOptions.RunContinuationsAsynchronously);
+                _documentCompletionSource = new TaskCompletionSource<ElementHandle>(TaskCreationOptions.None);
                 var context = await GetExecutionContextAsync().ConfigureAwait(false);
                 var document = await context.EvaluateExpressionHandleAsync("document").ConfigureAwait(false);
                 _documentCompletionSource.TrySetResult(document as ElementHandle);

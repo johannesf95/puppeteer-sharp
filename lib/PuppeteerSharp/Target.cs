@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using PuppeteerSharp.Helpers;
@@ -15,7 +15,7 @@ namespace PuppeteerSharp
     {
         #region Private members
         private readonly Func<Task<CDPSession>> _sessionFactory;
-        private readonly TaskCompletionSource<bool> _initializedTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<bool> _initializedTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
         private Task<Worker> _workerTask;
         #endregion
 
@@ -54,7 +54,7 @@ namespace PuppeteerSharp
                 openerPage.OnPopup(popupPage);
             });
 
-            CloseTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            CloseTaskWrapper = new TaskCompletionSource<bool>(TaskCreationOptions.None);
             IsInitialized = TargetInfo.Type != TargetType.Page || !string.IsNullOrEmpty(TargetInfo.Url);
 
             if (IsInitialized)
@@ -145,7 +145,7 @@ namespace PuppeteerSharp
             return new Worker(
                 client,
                 TargetInfo.Url,
-                (consoleType, handles, stackTrace) => Task.CompletedTask,
+                (consoleType, handles, stackTrace) => Task.FromResult(false),
                 (e) => { });
         }
 

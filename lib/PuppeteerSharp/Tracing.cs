@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -85,7 +85,7 @@ namespace PuppeteerSharp
         /// <returns>Stop task</returns>
         public async Task<string> StopAsync()
         {
-            var taskWrapper = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var taskWrapper = new TaskCompletionSource<string>(TaskCreationOptions.None);
 
             async void EventHandler(object sender, MessageEventArgs e)
             {
@@ -103,7 +103,7 @@ namespace PuppeteerSharp
                 catch (Exception ex)
                 {
                     var message = $"Tracing failed to process the tracing complete. {ex.Message}. {ex.StackTrace}";
-                    _logger.LogError(ex, message);
+                    _logger.LogError(message);
                     _client.Close(message);
                 }
             }

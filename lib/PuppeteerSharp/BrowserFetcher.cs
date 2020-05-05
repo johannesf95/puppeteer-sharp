@@ -109,7 +109,7 @@ namespace PuppeteerSharp
             {
                 string url = GetDownloadURL(Platform, DownloadHost, revision);
 
-                var client = WebRequest.Create(url);
+                var client = WebRequest.Create(new Uri(url));
                 client.Proxy = _webClient.Proxy;
                 client.Method = "HEAD";
                 using (var response = await client.GetResponseAsync().ConfigureAwait(false) as HttpWebResponse)
@@ -136,7 +136,7 @@ namespace PuppeteerSharp
                 return directoryInfo.GetDirectories().Select(d => GetRevisionFromPath(d.Name)).Where(v => v > 0);
             }
 
-            return Array.Empty<int>();
+            return new int[] { };
         }
 
         /// <summary>

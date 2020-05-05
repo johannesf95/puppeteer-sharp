@@ -35,7 +35,7 @@ namespace PuppeteerSharp
     /// ]]>
     /// </code>
     /// </example>
-    public class Browser : IDisposable, IAsyncDisposable
+    public class Browser : IDisposable//, IAsyncDisposable
     {
         /// <summary>
         /// Time in milliseconds for chromium process to exit gracefully.
@@ -71,7 +71,7 @@ namespace PuppeteerSharp
             Connection.MessageReceived += Connect_MessageReceived;
 
             ChromiumProcess = chromiumProcess;
-            _logger = Connection.LoggerFactory.CreateLogger<Browser>();
+            //_logger = Connection.LoggerFactory.CreateLogger<Browser>();
         }
 
         #region Private members
@@ -79,7 +79,6 @@ namespace PuppeteerSharp
         internal IDictionary<string, Target> TargetsMap { get; }
 
         private readonly Dictionary<string, BrowserContext> _contexts;
-        private readonly ILogger<Browser> _logger;
         private Task _closeTask;
 
         #endregion
@@ -296,7 +295,7 @@ namespace PuppeteerSharp
                 return existingTarget;
             }
 
-            var targetCompletionSource = new TaskCompletionSource<Target>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var targetCompletionSource = new TaskCompletionSource<Target>(TaskCreationOptions.None);
 
             void TargetHandler(object sender, TargetChangedArgs e)
             {
@@ -328,9 +327,7 @@ namespace PuppeteerSharp
                 {
                     // Initiate graceful browser close operation but don't await it just yet,
                     // because we want to ensure chromium process shutdown first.
-                    var browserCloseTask = Connection.IsClosed
-                        ? Task.CompletedTask
-                        : Connection.SendAsync("Browser.close", null);
+                    var browserCloseTask = Connection.SendAsync("Browser.close", null);
 
                     if (ChromiumProcess != null)
                     {
@@ -349,9 +346,9 @@ namespace PuppeteerSharp
                     Disconnect();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, ex.Message);
+                ////_logger.LogError(ex, ex.Message);
 
                 if (ChromiumProcess != null)
                 {
@@ -418,7 +415,7 @@ namespace PuppeteerSharp
             catch (Exception ex)
             {
                 var message = $"Browser failed to process Connection Close. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                ////_logger.LogError(ex, message);
                 Connection.Close(message);
             }
         }
@@ -445,7 +442,7 @@ namespace PuppeteerSharp
             catch (Exception ex)
             {
                 var message = $"Browser failed to process {e.MessageID}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                ////_logger.LogError(ex, message);
                 Connection.Close(message);
             }
         }
@@ -498,7 +495,7 @@ namespace PuppeteerSharp
 
             if (TargetsMap.ContainsKey(e.TargetInfo.TargetId))
             {
-                _logger.LogError("Target should not exist before targetCreated");
+                //_logger.LogError("Target should not exist before targetCreated");
             }
 
             TargetsMap[e.TargetInfo.TargetId] = target;
@@ -538,7 +535,7 @@ namespace PuppeteerSharp
 
         #endregion
 
-        #region IAsyncDisposable
+        //#region IAsyncDisposable
 
         /// <summary>
         /// Closes <see cref="Connection"/> and any Chromium <see cref="Process"/> that was
@@ -547,6 +544,6 @@ namespace PuppeteerSharp
         /// <returns>ValueTask</returns>
         public ValueTask DisposeAsync() => new ValueTask(CloseAsync());
 
-        #endregion
+        //#endregion
     }
 }

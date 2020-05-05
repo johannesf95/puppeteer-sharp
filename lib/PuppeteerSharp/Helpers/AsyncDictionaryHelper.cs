@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -19,7 +19,7 @@ namespace PuppeteerSharp.Helpers
 
         internal async Task<TValue> GetItemAsync(TKey key)
         {
-            var tcs = new TaskCompletionSource<TValue>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var tcs = new TaskCompletionSource<TValue>(TaskCreationOptions.None);
             _pendingRequests.Add(key, tcs);
 
             if (_dictionary.TryGetValue(key, out var item))
@@ -34,7 +34,7 @@ namespace PuppeteerSharp.Helpers
 
         internal async Task<TValue> TryGetItemAsync(TKey key)
         {
-            var tcs = new TaskCompletionSource<TValue>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var tcs = new TaskCompletionSource<TValue>(TaskCreationOptions.None);
             _pendingRequests.Add(key, tcs);
 
             if (_dictionary.TryGetValue(key, out var item))

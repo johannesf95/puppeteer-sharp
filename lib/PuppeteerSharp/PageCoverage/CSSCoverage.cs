@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -115,7 +115,7 @@ namespace PuppeteerSharp.PageCoverage
             catch (Exception ex)
             {
                 var message = $"CSSCoverage failed to process {e.MessageID}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                //_logger.LogError(ex, message);
                 _client.Close(message);
             }
         }

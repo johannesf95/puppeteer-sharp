@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Extensions.Logging;
@@ -60,7 +60,7 @@ namespace PuppeteerSharp
                         .ConfigureAwait(false);
 
                     var browser = await Browser
-                        .CreateAsync(connection, Array.Empty<string>(), options.IgnoreHTTPSErrors, options.DefaultViewport, Process)
+                        .CreateAsync(connection, new string[] { }, options.IgnoreHTTPSErrors, options.DefaultViewport, Process)
                         .ConfigureAwait(false);
 
                     await browser.WaitForTargetAsync(t => t.Type == TargetType.Page).ConfigureAwait(false);
@@ -114,7 +114,7 @@ namespace PuppeteerSharp
         {
             try
             {
-                if (Uri.TryCreate(new Uri(browserURL), "/json/version", out var endpointURL))
+                if (Uri.TryCreate(new Uri(browserURL), new Uri("/json/version"), out var endpointURL))
                 {
                     string data;
                     using (var client = new HttpClient())

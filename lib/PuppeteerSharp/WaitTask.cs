@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -134,7 +134,7 @@ async function waitForPredicatePageFunction(predicateBody, polling, timeout, ...
             _polling = polling;
             _pollingInterval = pollingInterval;
             _timeout = timeout;
-            _args = args ?? Array.Empty<object>();
+            _args = args ?? new object[] { };
             _title = title;
 
             _world.WaitTasks.Add(this);
@@ -147,7 +147,7 @@ async function waitForPredicatePageFunction(predicateBody, polling, timeout, ...
                     => Terminate(new WaitTaskTimeoutException(timeout, title)));
             }
 
-            _taskCompletion = new TaskCompletionSource<JSHandle>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _taskCompletion = new TaskCompletionSource<JSHandle>(TaskCreationOptions.None);
             _ = Rerun();
         }
 

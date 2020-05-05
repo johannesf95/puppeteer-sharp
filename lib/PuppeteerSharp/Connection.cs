@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
@@ -92,7 +92,7 @@ namespace PuppeteerSharp
         internal int GetMessageID() => Interlocked.Increment(ref _lastId);
         internal Task RawSendASync(int id, string method, object args, string sessionId = null)
         {
-            _logger.LogTrace("Send ► {Id} Method {Method} Params {@Params}", id, method, args);
+            //_logger.LogTrace("Send ► {Id} Method {Method} Params {@Params}", id, method, args);
             return Transport.SendAsync(JsonConvert.SerializeObject(
                 new ConnectionRequest
                 {
@@ -202,19 +202,19 @@ namespace PuppeteerSharp
                 {
                     obj = JsonConvert.DeserializeObject<ConnectionResponse>(response, JsonHelper.DefaultJsonSerializerSettings);
                 }
-                catch (JsonException exc)
+                catch
                 {
-                    _logger.LogError(exc, "Failed to deserialize response", response);
+                    _logger.LogError("Failed to deserialize response", response);
                     return;
                 }
 
-                _logger.LogTrace("◀ Receive {Message}", response);
+                //_logger.LogTrace("◀ Receive {Message}", response);
                 ProcessIncomingMessage(obj);
             }
             catch (Exception ex)
             {
                 var message = $"Connection failed to process {e.Message}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                _logger.LogError(message);
                 Close(message);
             }
         }

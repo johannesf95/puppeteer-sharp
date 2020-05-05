@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -83,7 +83,7 @@ namespace PuppeteerSharp
 
             if (context == null)
             {
-                _logger.LogError("INTERNAL ERROR: missing context with id = {ContextId}", contextId);
+                //_logger.LogError("INTERNAL ERROR: missing context with id = {ContextId}", contextId);
             }
             return context;
         }
@@ -207,7 +207,7 @@ namespace PuppeteerSharp
             catch (Exception ex)
             {
                 var message = $"Connection failed to process {e.MessageID}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                //_logger.LogError(ex, message);
                 Client.Close(message);
             }
         }

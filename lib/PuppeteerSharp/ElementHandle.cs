@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -303,7 +303,7 @@ namespace PuppeteerSharp
         }
 
         /// <summary>
-        /// Runs <c>element.querySelectorAll</c> within the page. If no elements match the selector, the return value resolve to <see cref="Array.Empty{T}"/>.
+        /// Runs <c>element.querySelectorAll</c> within the page. If no elements match the selector, the return value resolve to/>.
         /// </summary>
         /// <param name="selector">A selector to query element for</param>
         /// <returns>Task which resolves to ElementHandles pointing to the frame elements</returns>
@@ -476,9 +476,9 @@ namespace PuppeteerSharp
                 await Task.WhenAll(contentQuadsTask, layoutTask).ConfigureAwait(false);
                 result = contentQuadsTask.Result;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Unable to get content quads");
+                _logger.LogError("Unable to get content quads");
             }
 
             if (result == null || result.Quads.Length == 0)

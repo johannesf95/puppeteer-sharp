@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -369,7 +369,7 @@ namespace PuppeteerSharp
         public Task<ElementHandle> QuerySelectorAsync(string selector) => MainWorld.QuerySelectorAsync(selector);
 
         /// <summary>
-        /// Queries frame for the selector. If no elements match the selector, the return value resolve to <see cref="Array.Empty{T}"/>.
+        /// Queries frame for the selector. If no elements match the selector, the return value resolve to >.
         /// </summary>
         /// <param name="selector">A selector to query frame for</param>
         /// <returns>Task which resolves to ElementHandles pointing to the frame elements</returns>

@@ -35,7 +35,7 @@ namespace PuppeteerSharp
     /// </code>
     /// </example>
     [DebuggerDisplay("Page {Url}")]
-    public class Page : IDisposable, IAsyncDisposable
+    public class Page : IDisposable//, IAsyncDisposable
     {
         private readonly TaskQueue _screenshotTaskQueue;
         private readonly EmulationManager _emulationManager;
@@ -45,7 +45,7 @@ namespace PuppeteerSharp
         private PageGetLayoutMetricsResponse _burstModeMetrics;
         private bool _screenshotBurstModeOn;
         private ScreenshotOptions _screenshotBurstModeOptions;
-        private readonly TaskCompletionSource<bool> _closeCompletedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<bool> _closeCompletedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.None);
         private TaskCompletionSource<bool> _sessionClosedTcs;
         private readonly TimeoutSettings _timeoutSettings;
         private bool _fileChooserInterceptionIsDisabled;
@@ -374,7 +374,7 @@ namespace PuppeteerSharp
             {
                 if (_sessionClosedTcs == null)
                 {
-                    _sessionClosedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    _sessionClosedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.None);
                     Client.Disconnected += clientDisconnected;
 
                     void clientDisconnected(object sender, EventArgs e)
@@ -460,7 +460,7 @@ namespace PuppeteerSharp
             => MainFrame.QuerySelectorAsync(selector);
 
         /// <summary>
-        /// Runs <c>document.querySelectorAll</c> within the page. If no elements match the selector, the return value resolve to <see cref="Array.Empty{T}"/>.
+        /// Runs <c>document.querySelectorAll</c> within the page. If no elements match the selector, the return value resolve to />.
         /// </summary>
         /// <param name="selector">A selector to query page for</param>
         /// <returns>Task which resolves to ElementHandles pointing to the frame elements</returns>
@@ -1001,7 +1001,7 @@ namespace PuppeteerSharp
         {
             if (enabled == JavascriptEnabled)
             {
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
             JavascriptEnabled = enabled;
             return Client.SendAsync("Emulation.setScriptExecutionDisabled", new EmulationSetScriptExecutionDisabledRequest
@@ -1302,7 +1302,7 @@ namespace PuppeteerSharp
                 }).ContinueWith(task => Target.CloseTask);
             }
 
-            _logger.LogWarning("Protocol error: Connection closed. Most likely the page has been closed.");
+            //_logger.LogWarning("Protocol error: Connection closed. Most likely the page has been closed.");
             return _closeCompletedTcs.Task;
         }
 
@@ -1617,7 +1617,7 @@ namespace PuppeteerSharp
         public async Task<Request> WaitForRequestAsync(Func<Request, bool> predicate, WaitForOptions options = null)
         {
             var timeout = options?.Timeout ?? DefaultTimeout;
-            var requestTcs = new TaskCompletionSource<Request>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var requestTcs = new TaskCompletionSource<Request>(TaskCreationOptions.None);
 
             void requestEventListener(object sender, RequestEventArgs e)
             {
@@ -1677,7 +1677,7 @@ namespace PuppeteerSharp
         public async Task<Response> WaitForResponseAsync(Func<Response, bool> predicate, WaitForOptions options = null)
         {
             var timeout = options?.Timeout ?? DefaultTimeout;
-            var responseTcs = new TaskCompletionSource<Response>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var responseTcs = new TaskCompletionSource<Response>(TaskCreationOptions.None);
 
             void responseEventListener(object sender, ResponseCreatedEventArgs e)
             {
@@ -1775,7 +1775,7 @@ namespace PuppeteerSharp
                 ResetBackgroundColorAndViewportAsync(_screenshotBurstModeOptions);
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(false);
         }
 
         /// <summary>
@@ -2031,10 +2031,9 @@ namespace PuppeteerSharp
 
         private Task ResetBackgroundColorAndViewportAsync(ScreenshotOptions options)
         {
-            var omitBackgroundTask = options?.OmitBackground == true && options.Type == ScreenshotType.Png ?
-                Client.SendAsync("Emulation.setDefaultBackgroundColorOverride") : Task.CompletedTask;
+            var omitBackgroundTask = Client.SendAsync("Emulation.setDefaultBackgroundColorOverride");
             var setViewPortTask = (options?.FullPage == true && Viewport != null) ?
-                SetViewportAsync(Viewport) : Task.CompletedTask;
+                SetViewportAsync(Viewport) : Task.FromResult(false);
             return Task.WhenAll(omitBackgroundTask, setViewPortTask);
         }
 
@@ -2127,7 +2126,7 @@ namespace PuppeteerSharp
             catch (Exception ex)
             {
                 var message = $"Page failed to process {e.MessageID}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                //_logger.LogError(ex, message);
                 Client.Close(message);
             }
         }
@@ -2146,7 +2145,7 @@ namespace PuppeteerSharp
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, ex.ToString());
+                    _logger.LogError(ex.ToString());
                 }
             }
 
@@ -2333,7 +2332,7 @@ namespace PuppeteerSharp
         {
             if (message.ExecutionContextId == 0)
             {
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
             var ctx = FrameManager.ExecutionContextById(message.ExecutionContextId);
             var values = message.Args.Select(ctx.CreateJSHandle).ToArray();
@@ -2402,7 +2401,7 @@ namespace PuppeteerSharp
                 {
                     if (task.IsFaulted)
                     {
-                        _logger.LogError(task.Exception.ToString());
+                        //_logger.LogError(task.Exception.ToString());
                     }
                 }))).ConfigureAwait(false);
         }

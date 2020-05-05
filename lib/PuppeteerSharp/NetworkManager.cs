@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -157,7 +157,7 @@ namespace PuppeteerSharp
             catch (Exception ex)
             {
                 var message = $"NetworkManager failed to process {e.MessageID}. {ex.Message}. {ex.StackTrace}";
-                _logger.LogError(ex, message);
+                //_logger.LogError(ex, message);
                 _client.Close(message);
             }
         }

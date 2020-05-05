@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using PuppeteerSharp.Messaging;
 
@@ -51,7 +51,7 @@ namespace PuppeteerSharp.Input
             await _client.SendAsync("Input.dispatchTouchEvent", new InputDispatchTouchEventRequest
             {
                 Type = "touchEnd",
-                TouchPoints = Array.Empty<TouchPoint>(),
+                TouchPoints = new TouchPoint[] { },
                 Modifiers = _keyboard.Modifiers
             }).ConfigureAwait(false);
         }
